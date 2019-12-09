@@ -117,7 +117,7 @@ public class LocationService extends Service {
                 Log.d("location", "onLocationChanged:" + location.getTime() + location.getLatitude());
 
                 String msg="New Latitude: "+location.getLatitude() + "New Longitude: "+location.getLongitude();
-                Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
 
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
@@ -152,8 +152,8 @@ public class LocationService extends Service {
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(),
-                                        error, Toast.LENGTH_LONG).show();
+//                                Toast.makeText(getApplicationContext(),
+//                                        error, Toast.LENGTH_LONG).show();
                             }
                         });
                     }
@@ -164,8 +164,8 @@ public class LocationService extends Service {
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(),
-                                        "LOcation pushed", Toast.LENGTH_LONG).show();
+//                                Toast.makeText(getApplicationContext(),
+//                                        "LOcation pushed", Toast.LENGTH_LONG).show();
                             }
                         });
                     }
@@ -207,10 +207,10 @@ public class LocationService extends Service {
 //            return TODO;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                15000,
-                1,
+                30000,
+                50,
                 listener);//time is in millisecond and distance in meter
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 15000, 1, listener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 50, listener);
 
 
 

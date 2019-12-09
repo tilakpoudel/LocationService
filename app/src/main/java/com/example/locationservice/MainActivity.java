@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,14 +26,25 @@ public class MainActivity extends AppCompatActivity {
 //    private Button btn_start, btn_stop;
     private TextView textView;
     private BroadcastReceiver broadcastReceiver;
-
+    private boolean switchOnOff;
+    private  String SWITCHSTATE = "switchState";
 
     public boolean onCreateOptionsMenu(Menu menu){
+        Log.d("location", "onCreateOptionsMenu: menu created");
         getMenuInflater().inflate(R.menu.action_menu,menu);
 
         MenuItem itemSwitch = menu.findItem(R.id.mySwitch);
         itemSwitch.setActionView(R.layout.switch_layout);
         final Switch sw = (Switch) menu.findItem(R.id.mySwitch).getActionView().findViewById(R.id.switch1);
+
+        //save switch state in shared preferences
+        final Context context = getApplicationContext();
+        final SharedPreferences sharedPreferences = context.getSharedPreferences(SWITCHSTATE,MODE_PRIVATE);
+
+        switchOnOff = sharedPreferences.getBoolean(SWITCHSTATE,false);
+        Log.d("location", "onCreateOptionsMenu: switch status is "+switchOnOff);
+        sw.setChecked(switchOnOff);
+//        sw.setChecked(false);
 
         sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -40,7 +52,15 @@ public class MainActivity extends AppCompatActivity {
 
                 if(!runtime_permissions()) {
                     if (isChecked) {
-                        Log.d("location", "onCheckedChanged: ture" + isChecked);
+
+                        SharedPreferences.Editor editor =context.getSharedPreferences(SWITCHSTATE,MODE_PRIVATE).edit();
+                        editor.putBoolean(SWITCHSTATE,isChecked);
+                        editor.putString("s","tilak");
+                        editor.apply();
+//                        sw.setChecked(true);
+                        String name = sharedPreferences.getString("s","devault value");
+
+                       Log.d("location", "onCheckedChanged: name stored is " + name);
                         Intent i = new Intent(getApplicationContext(), LocationService.class);
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -53,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
 //                        startService(i);
                     Toast.makeText(getBaseContext(),"Location on",Toast.LENGTH_LONG).show();
                     } else {
+                        SharedPreferences.Editor editor = context.getSharedPreferences(SWITCHSTATE,MODE_PRIVATE).edit();
+                        editor.putBoolean(SWITCHSTATE,isChecked);
+                        editor.apply();
+//                        sw.setChecked(false);
+//                        String  sitchValue = sharedPreferences.getString("switchState",null);
+//                        Log.d("location",sitchValue);
+
                         Intent i = new Intent(getApplicationContext(), LocationService.class);
                         Log.d("location", "onCheckedChanged: flase" + isChecked);
                         stopService(i);
@@ -61,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+
         });
 
 
@@ -71,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("location", "onResume: resumed");
         if(broadcastReceiver == null){
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
@@ -87,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d("location", "onDestroy: destroyed");
         if(broadcastReceiver != null){
             unregisterReceiver(broadcastReceiver);
         }

@@ -6,7 +6,8 @@
         android:id="@+id/mySwitch"
         android:title=""
         app:showAsAction="always"
-        android:actionLayout="@layout/switch_layout">
+        android:actionLayout="@layout/switch_layout"
+        android:launchMode="singleInstance">
 
 
     </item>
